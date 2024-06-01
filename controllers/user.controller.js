@@ -25,6 +25,26 @@ userController.createUser = async (req,res) =>{
 
 }
 
+userController.loginWithEmail = async (req,res) => {
+    try{
+        const {email,password} = req.body;
+        const user = await User.findOne({email},"-createdAt -updatedAt -__v");
+        if(user){
+            const isMatch = await bcrypt.compareSync(password, user.password); 
+            if(isMatch){
+                const token = await user.generateToken();
+                return res.status(200).json({status:'Login Success!', user, token }); //응답으로 user와 토큰 보내준다. 
+            }
+        } 
+        throw new Error(`Incorrect password for ${email}. Try again.`)
+        
+
+    }catch(error){
+        res.status(400).json({status:'Fail..', message: error.message})
+        
+    }
+}
+
 
 
 

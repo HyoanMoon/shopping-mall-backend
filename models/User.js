@@ -1,5 +1,8 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const jwt = require('jsonwebtoken');
+require ('dotenv').config();
+const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY
 
 
 
@@ -37,6 +40,11 @@ userSchema.methods.toJSON =function(){
     return obj 
 
 }; // 언제든지 be -> fe 로 데이터를 보낼때 항상 저렇게 호출이 된다!!!!! 
+
+userSchema.methods.generateToken = function(){
+    const token = jwt.sign({_id : this._id}, JWT_SECRET_KEY,{expiresIn:"1d"} );
+    return token;
+}
 
 const User = mongoose.model("User",userSchema);
 
