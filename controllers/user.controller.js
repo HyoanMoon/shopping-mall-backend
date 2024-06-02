@@ -45,6 +45,24 @@ userController.loginWithEmail = async (req,res) => {
     }
 }
 
+userController.getUser = async (req,res) => {
+    try{
+        const {userId} = req
+        const user = await User.findById(userId, "-updatedAt -__v");
+        if(!user) {
+            throw new Error("Cannot find User.")
+
+        }
+        res.status(200).json({status:'User id OK!', user })
+
+
+    }catch(err) {
+        res.status(400).json({status:'Fail..!', message: err.message})
+        
+    }
+
+};
+
 
 
 
