@@ -28,13 +28,12 @@ productController.createProduct = async (req,res) => {
 }
 productController.getProducts = async (req,res) => {
     try{
-        const products = await Product.find({});
+        const {page,name} = req.query
+        const cond = name?{name:{$regex: name, $options: 'i'}} : {}
+        let query = Product.find(cond)
 
-        if(!products) {
-            throw new Error('Product not found')
-        }
-        res.status(200).json({ status: 'Success', data: products });
-
+        const productList = await query.exec()  // query를 실행시키고 싶을때 또는 실행을 따로 하고 싶을때 
+        res.status(200).json({ status: 'Success', data: productList });
 
     }
     catch(error){
