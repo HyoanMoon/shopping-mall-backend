@@ -18,14 +18,10 @@ productController.createProduct = async (req,res) => {
         });
         await product.save();
         return res.status(200).json({status:'Success', product});
-
-
     }catch(error){
         res.status(400).json({status:'Fail..', message: error.message});
-
     }
-
-}
+};
 productController.getProducts = async (req,res) => {
     try{
         const {page,name} = req.query
@@ -42,19 +38,38 @@ productController.getProducts = async (req,res) => {
             // 데이터 총 개수 / PAGE_SIZE
             const totalPageNum = Math.ceil(totalItemNum / PAGE_SIZE); //전체 페이지 = 전체 데이터 수 / 내 페이지 사이즈
             response.totalPageNum = totalPageNum
-
         }
-
         const productList = await query.exec()  // query를 실행시키고 싶을때 또는 실행을 따로 하고 싶을때
         response.data= productList
         res.status(200).json(response);
-
     }
     catch(error){
-
         res.status(400).json({ status: 'Fail', message: error.message });
     }
+};
+productController.updateProduct =async(req,res) => {
+    try{
+        const productId = req.params.id;
+        const {sku,
+            name,
+            size,
+            image,
+            category,
+            description,
+            price,
+            stock,
+            status } = req.body;
+        const product = await Product.findByIdAndUpdate(
+            {_id:productId}, 
+            {sku,name,size,image,category,description,price,stock,status },
+            {new:true}); // UPDATE 함수들에 옵션으로 줄 수 있는 값. 업데이트힌 후 새로운 값을 반환 받을 수 있다.
+            if(!product) throw new Error("item doesn't exist")
+            res.status(200).json({status:'Success',data: product});
+            
 
+    }catch(error){
+        res.status(400).json({ status: 'Fail', message: error.message });
+    }
 }
 
 

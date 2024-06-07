@@ -12,7 +12,12 @@ authController.checkAdminPermission, // 어드민인지 확인하고
 productController.createProduct // 상품 재고정리로 넘어간다
 );
 
-router.get("/",productController.getProducts)
+router.get("/",productController.getProducts);
+
+router.put("/:id",
+authController.authenticate,
+authController.checkAdminPermission,
+productController.updateProduct);
 
 
 
