@@ -70,8 +70,36 @@ productController.updateProduct =async(req,res) => {
     }catch(error){
         res.status(400).json({ status: 'Fail', message: error.message });
     }
+};
+
+productController.deleteProduct = async(req,res) => {
+    try{
+        const productId = req.params.id;
+        const deleteProduct = await Product.findByIdAndUpdate(
+            {_id:productId},
+            { isDeleted: true, status: 'disactive' });
+        if(!deleteProduct) throw new Error("item doesn't exist")
+        res.status(200).json({status:'Success',data : deleteProduct});
+
+    }catch(error){
+        res.status(400).json({ status: 'Fail', message: error.message });
+    }
+}
+
+productController.getProductById = async (req,res) => {
+    try{
+        const productId = req.params.id;
+        const product = await Product.findById(productId);
+        if (!product) throw new Error("item doesn't exist");
+        res.status(200).json({ status: "success", data: product });
+
+    }catch(error){
+        res.status(400).json({ status: 'Fail', message: error.message });
+    }
 }
 
 
 
+
 module.exports = productController;
+

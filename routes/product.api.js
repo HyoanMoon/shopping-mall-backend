@@ -17,7 +17,17 @@ router.get("/",productController.getProducts);
 router.put("/:id",
 authController.authenticate,
 authController.checkAdminPermission,
-productController.updateProduct);
+productController.updateProduct
+);
+
+router.patch("/:id",
+authController.authenticate,
+authController.checkAdminPermission,
+productController.deleteProduct
+);
+
+router.get("/:id", productController.getProductById);
+
 
 
 
