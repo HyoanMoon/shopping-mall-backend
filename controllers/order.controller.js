@@ -1,7 +1,9 @@
 const orderController = {};
 const Order = require("../models/Order");
 const productController = require("./product.controller");
-const {randomStringGenerator} = require("../utils/randomStringGenerator");
+const { randomStringGenerator } = require("../utils/randomStringGenerator");
+const { populate } = require("dotenv");
+const { model } = require("mongoose");
 
 
 
@@ -14,8 +16,8 @@ orderController.createOrder = async (req, res) => {
         const insufficientStockItems = await productController.checkItemListStock(orderList)
 
         // 재고가 충분하지 않은 아이템이 있으면 =>  에러!
-        if(insufficientStockItems.length > 0) {
-            const errorMessage = insufficientStockItems.reduce((total, item)=> total+= item.message, "")
+        if (insufficientStockItems.length > 0) {
+            const errorMessage = insufficientStockItems.reduce((total, item) => total += item.message, "")
             throw new Error(errorMessage)
         }
         //재고가 충분해서 통과 하면⬇︎
@@ -26,20 +28,44 @@ orderController.createOrder = async (req, res) => {
             totalPrice,
             shipTo,
             contact,
-            orderItems: orderList,
-            orderNum : randomStringGenerator()
+            items: orderList,
+            orderNum: randomStringGenerator()
         });
-        
-        await newOrder.save(); //save 후에 비워주자!
-        
 
-        res.status(200).json({status: 'success', orderNum: newOrder.orderNum  });
+        await newOrder.save(); //save 후에 비워주자!
+
+
+        res.status(200).json({ status: 'success', orderNum: newOrder.orderNum });
 
     } catch (error) {
-        return res.status(400).json({status: "fail", error: error.message})
+        return res.status(400).json({ status: "fail", error: error.message })
 
     }
-}
+};
+
+orderController.getOrder = async (req, res, next) => {
+    try {
+      const { userId } = req;
+  
+      const orderList = await Order.find({ userId: userId }).populate({
+        path: "items",
+        populate: {
+          path: "productId",
+          model: "Product",
+          select: "image name",
+        },
+      });
+      
+  
+
+      res.status(200).json({ status: "success", data: orderList});
+    } catch (error) {
+      return res.status(400).json({ status: "fail", error: error.message });
+    }
+  };
+
+  
+
 
 
 module.exports = orderController; // orderApi 에서 사용할 수 있음.

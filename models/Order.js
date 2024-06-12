@@ -34,7 +34,7 @@ const orderSchema = Schema({
         default: "preparing"
     },
 
-    orderItems : [{
+    items : [{
         productId : {type : mongoose.ObjectId, ref:Product, required: true,},
         size : {type: String, required: true},
         qty: {type: Number, default: 1, required: true},
