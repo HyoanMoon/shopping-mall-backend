@@ -66,5 +66,8 @@ orderSchema.post("save", async function(){ // save 후에(post) ~~
 
 const Order = mongoose.model("Order",orderSchema);
 
+
+
+
 module.exports = Order;
 
