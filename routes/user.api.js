@@ -12,6 +12,9 @@ router.post("/login", userController.loginWithEmail);
 //3. 토큰으로 로그인
 router.get("/me", authController.authenticate, userController.getUser); 
 
+//4. google로 로그인 
+router.post("/google", userController.loginWithGoogle);
+
 
 
 
